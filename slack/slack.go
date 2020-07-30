@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"dev.duclm/vietlott/repository"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -44,7 +43,7 @@ func (m Messenger) Send(msg SlackMessage) error {
 	}
 
 	if buf.String() != "ok" {
-		return errors.New("slack/messenger: non-ok response returned from Slack")
+		return fmt.Errorf("slack/messenger: non-ok response returned from Slack: %s", buf.String())
 	}
 	return nil
 }

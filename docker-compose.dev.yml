@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  vietlott:
+
+
+  mongodb:
+    image: mongo:3-xenial
+    container_name: mongo
+    restart: always
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+      # admin authentication database
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=123456Aa@
+      - MONGO_INITDB_DATABASE=vietlott
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-db:/data/db
+      - ./docker/mongo:/docker-entrypoint-initdb.d/
+
+volumes:
+  mongo-db:
