@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"context"
 	"dev.duclm/vietlott/parser/domain"
 	"dev.duclm/vietlott/repository"
 	"errors"
@@ -32,13 +33,13 @@ func NewJackpotParser(colly *colly.Collector, cfg repository.ParserConfig) parse
 	}
 }
 
-func (p parser) ParseMega645Result() (domain.Mega645Result, error) {
+func (p parser) ParseMega645Result(ctx context.Context) (domain.Mega645Result, error) {
 	var result domain.Mega645Result
 	if p.collector == nil {
 		return result, errors.New("parse mega645: collector not initialized")
 	}
 
-	config, err := p.parserConfigRepo.Get()
+	config, err := p.parserConfigRepo.GetParserConfig(ctx)
 	if err != nil {
 		return result, fmt.Errorf("parse mega645: %w", err)
 	}
@@ -65,7 +66,7 @@ func (p parser) ParseMega645Result() (domain.Mega645Result, error) {
 		return result, errors.New("parse mega645: invalid draw id selector")
 	}
 	if rawResult.DrawDate == "" {
-		return result, errors.New("parse mega645: invalid draw id selector")
+		return result, errors.New("parse mega645: invalid draw date selector")
 	}
 	if rawResult.Prize == "" {
 		return result, errors.New("parse mega645: invalid prize selector")

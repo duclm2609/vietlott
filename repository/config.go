@@ -1,9 +1,10 @@
 package repository
 
 import (
+	"context"
 	"dev.duclm/vietlott/parser/domain"
 )
 
 type ParserConfig interface {
-	Get() (domain.ParserConfig, error)
+	GetParserConfig(ctx context.Context) (domain.ParserConfig, error)
 }

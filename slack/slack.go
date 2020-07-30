@@ -2,7 +2,7 @@ package slack
 
 import (
 	"bytes"
-	"dev.duclm/vietlott/repository"
+	"dev.duclm/vietlott/infrastructure"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,22 +10,18 @@ import (
 )
 
 type messenger struct {
-	cfg repository.SlackConfig
+	cfg infrastructure.Config
 }
 
 type Messenger messenger
 
-func NewMessenger(cfg repository.SlackConfig) Messenger {
+func NewMessenger(cfg infrastructure.Config) Messenger {
 	return Messenger{cfg: cfg}
 }
 
 func (m Messenger) Send(msg SlackMessage) error {
-	url, err := m.cfg.GetWebhookUrl()
-	if err != nil {
-		return fmt.Errorf("slack/messenger: %w", err)
-	}
 	slackBody, _ := json.Marshal(msg)
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(slackBody))
+	req, err := http.NewRequest(http.MethodPost, m.cfg.SlackWebhooUrl, bytes.NewBuffer(slackBody))
 	if err != nil {
 		return fmt.Errorf("slack/messenger: %w", err)
 	}
