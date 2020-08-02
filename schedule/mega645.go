@@ -65,8 +65,17 @@ func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
 			}
 		}
 		_ = u.slack.Send(domain.MapFrom(jackpotRes))
+
+		// convert jackpot to int
+		var jackpotNum = make([]int, 6)
+		for index, num := range jackpotRes.Jackpot {
+			jackpotNum[index], _ = strconv.Atoi(num)
+		}
+		sort.Ints(jackpotNum)
+		log.Println(fmt.Sprintf("jackpot numbers: %v", jackpotNum))
 		for _, ticket := range tickets {
-			prize := Compare(ticket.Number, jackpotRes.Jackpot)
+			sort.Ints(ticket.Number)
+			prize := Compare(ticket.Number, jackpotNum)
 			log.Println(fmt.Sprintf("compare ticket %v: %v", ticket.Number, prize))
 			switch prize {
 			case JackpotPrize:
@@ -93,15 +102,9 @@ func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
 	}
 }
 
-func Compare(ticket []int, prize domain.Jackpot) LotteryPrize {
-	converPrize := make([]int, 6)
-	for i, c := range prize {
-		converPrize[i], _ = strconv.Atoi(c)
-	}
-	sort.Ints(ticket)
-	sort.Ints(converPrize)
+func Compare(ticket []int, jackpot []int) LotteryPrize {
 	matched := 0
-	for i, num := range converPrize {
+	for i, num := range jackpot {
 		if ticket[i] == num {
 			matched++
 		}
