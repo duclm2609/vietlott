@@ -5,7 +5,9 @@ import (
 	"dev.duclm/vietlott/domain"
 	"dev.duclm/vietlott/service"
 	"dev.duclm/vietlott/slack"
+	"fmt"
 	"log"
+	"sort"
 	"strconv"
 	"time"
 )
@@ -65,6 +67,7 @@ func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
 		_ = u.slack.Send(domain.MapFrom(jackpotRes))
 		for _, ticket := range tickets {
 			prize := Compare(ticket.Number, jackpotRes.Jackpot)
+			log.Println(fmt.Sprintf("compare ticket %v: %v", ticket.Number, prize))
 			switch prize {
 			case JackpotPrize:
 				copy(result.JackpotPrize[:], ticket.Number)
@@ -95,7 +98,8 @@ func Compare(ticket []int, prize domain.Jackpot) LotteryPrize {
 	for i, c := range prize {
 		converPrize[i], _ = strconv.Atoi(c)
 	}
-
+	sort.Ints(ticket)
+	sort.Ints(converPrize)
 	matched := 0
 	for i, num := range converPrize {
 		if ticket[i] == num {

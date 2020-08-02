@@ -57,7 +57,7 @@ func (h handler) Update(ctx context.Context) error {
 		}},
 	}
 
-	updateResult, err := h.db.Collection("mega645_ticket").UpdateOne(ctx, filter, update)
+	updateResult, err := h.db.Collection("mega645_ticket").UpdateMany(ctx, filter, update)
 	if err != nil {
 		return err
 	}
