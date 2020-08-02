@@ -3,10 +3,14 @@ package main
 import (
 	"context"
 	"dev.duclm/vietlott/infrastructure"
-	"dev.duclm/vietlott/parser"
 	"dev.duclm/vietlott/persistence/mongodb"
+	"dev.duclm/vietlott/schedule"
+	"dev.duclm/vietlott/service"
 	"dev.duclm/vietlott/slack"
+	"dev.duclm/vietlott/web"
+	"dev.duclm/vietlott/web/controller"
 	"github.com/gocolly/colly"
+	"github.com/jasonlvhit/gocron"
 	"github.com/joho/godotenv"
 	"github.com/sethvargo/go-envconfig"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -56,16 +60,23 @@ func main() {
 	c := colly.NewCollector()
 	mongoHandler := mongodb.NewHandler(database)
 
-	p := parser.NewJackpotParser(c, mongoHandler)
-
+	parser := service.NewJackpotParser(c, mongoHandler)
 	slackMessenger := slack.NewMessenger(cfg)
 
-	result, err := p.ParseMega645Result(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
+	ticketService := service.NewTicketService(mongoHandler)
+	ticketController := controller.NewTicketController(ticketService)
 
-	if err = slackMessenger.Send(slack.MapFrom(result)); err != nil {
+	task := schedule.NewUpdateTask(parser, slackMessenger, ticketService)
+	go func() {
+		_ = gocron.Every(1).Wednesday().At("19:00").Do(task.TaskUpdateResultAndCompare, ctx)
+		_ = gocron.Every(1).Friday().At("19:00").Do(task.TaskUpdateResultAndCompare, ctx)
+		_ = gocron.Every(1).Sunday().At("19:00").Do(task.TaskUpdateResultAndCompare, ctx)
+		// Start all the pending jobs
+		<-gocron.Start()
+	}()
+
+	server := web.New(cfg, ticketController)
+	if err = server.Run(); err != nil {
 		log.Fatal(err)
 	}
 }

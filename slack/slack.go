@@ -2,6 +2,7 @@ package slack
 
 import (
 	"bytes"
+	"dev.duclm/vietlott/domain"
 	"dev.duclm/vietlott/infrastructure"
 	"encoding/json"
 	"fmt"
@@ -19,7 +20,7 @@ func NewMessenger(cfg infrastructure.Config) Messenger {
 	return Messenger{cfg: cfg}
 }
 
-func (m Messenger) Send(msg SlackMessage) error {
+func (m Messenger) Send(msg domain.SlackMessage) error {
 	slackBody, _ := json.Marshal(msg)
 	req, err := http.NewRequest(http.MethodPost, m.cfg.SlackWebhooUrl, bytes.NewBuffer(slackBody))
 	if err != nil {

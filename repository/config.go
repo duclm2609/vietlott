@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"dev.duclm/vietlott/parser/domain"
+	"dev.duclm/vietlott/domain"
 )
 
 type ParserConfig interface {

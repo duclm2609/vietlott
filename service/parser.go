@@ -1,8 +1,8 @@
-package parser
+package service
 
 import (
 	"context"
-	"dev.duclm/vietlott/parser/domain"
+	"dev.duclm/vietlott/domain"
 	"dev.duclm/vietlott/repository"
 	"errors"
 	"fmt"
@@ -21,25 +21,25 @@ type rawResult struct {
 	Winner   string
 }
 
-type parser struct {
+type Parser struct {
 	collector        *colly.Collector
-	parserConfigRepo repository.ParserConfig
+	ParserConfigRepo repository.ParserConfig
 }
 
-func NewJackpotParser(colly *colly.Collector, cfg repository.ParserConfig) parser {
-	return parser{
+func NewJackpotParser(colly *colly.Collector, cfg repository.ParserConfig) Parser {
+	return Parser{
 		collector:        colly,
-		parserConfigRepo: cfg,
+		ParserConfigRepo: cfg,
 	}
 }
 
-func (p parser) ParseMega645Result(ctx context.Context) (domain.Mega645Result, error) {
+func (p Parser) ParseMega645Result(ctx context.Context) (domain.Mega645Result, error) {
 	var result domain.Mega645Result
 	if p.collector == nil {
 		return result, errors.New("parse mega645: collector not initialized")
 	}
 
-	config, err := p.parserConfigRepo.GetParserConfig(ctx)
+	config, err := p.ParserConfigRepo.GetParserConfig(ctx)
 	if err != nil {
 		return result, fmt.Errorf("parse mega645: %w", err)
 	}

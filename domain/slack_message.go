@@ -1,7 +1,6 @@
-package slack
+package domain
 
 import (
-	"dev.duclm/vietlott/parser/domain"
 	"fmt"
 )
 
@@ -44,7 +43,7 @@ func mapJackpotPrize(prize string) Text {
 	}
 }
 
-func mapJackpotNumber(prize domain.Jackpot) Text {
+func mapJackpotNumber(prize Jackpot) Text {
 	return Text{
 		Type: TextTypeMarkdown,
 		Text: fmt.Sprintf(":slot_machine: Jackpot: *%s*", prize),
@@ -58,7 +57,7 @@ func mapNumberOfJackpot(number string) Text {
 	}
 }
 
-func MapFrom(mega domain.Mega645Result) SlackMessage {
+func MapFrom(mega Mega645Result) SlackMessage {
 	return SlackMessage{
 		Blocks: []Block{
 			{
@@ -83,4 +82,54 @@ func MapFrom(mega domain.Mega645Result) SlackMessage {
 			},
 		},
 	}
+}
+
+func MapFromCompareResult(result Mega645CompareResult) SlackMessage {
+	var blocks []Block
+	if result.JackpotPrize[0] != 0 {
+		blocks = append(blocks, Block{
+			Type: BlockTypeSection,
+			Text: Text{
+				Type: TextTypeMarkdown,
+				Text: fmt.Sprintf(":tada: *Trúng Jackpot rồiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii!!!!!!!!!!!!!!!!!!!*\n%+v", result.JackpotPrize),
+			},
+		})
+	}
+	if len(result.FirstPrize) > 0 {
+		blocks = append(blocks, Block{
+			Type: BlockTypeSection,
+			Text: Text{
+				Type: TextTypeMarkdown,
+				Text: fmt.Sprintf("Giải nhất: %d", len(result.FirstPrize)),
+			},
+		})
+	}
+	if len(result.SecondPrize) > 0 {
+		blocks = append(blocks, Block{
+			Type: BlockTypeSection,
+			Text: Text{
+				Type: TextTypeMarkdown,
+				Text: fmt.Sprintf("Giải nhì: %d", len(result.SecondPrize)),
+			},
+		})
+	}
+	if len(result.ThirdPrize) > 0 {
+		blocks = append(blocks, Block{
+			Type: BlockTypeSection,
+			Text: Text{
+				Type: TextTypeMarkdown,
+				Text: fmt.Sprintf("Giải ba: %d", len(result.ThirdPrize)),
+			},
+		})
+	}
+	if len(blocks) == 0 {
+		blocks = append(blocks, Block{
+			Type: BlockTypeSection,
+			Text: Text{
+				Type: TextTypeMarkdown,
+				Text: "Chưa trúng phát nào, chúc may mắn lần sau nhé ông bạn!",
+			},
+		})
+	}
+	return SlackMessage{Blocks: blocks}
 }

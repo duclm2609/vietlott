@@ -2,7 +2,7 @@ package mongodb
 
 import (
 	"context"
-	"dev.duclm/vietlott/parser/domain"
+	"dev.duclm/vietlott/domain"
 	"dev.duclm/vietlott/persistence/mongodb/entity"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
