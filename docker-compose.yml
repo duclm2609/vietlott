@@ -2,29 +2,15 @@ version: "3"
 
 services:
   vietlott:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: duclm2609/vietlott:latest
     container_name: vietlott
+    env_file:
+      - .env
     restart: always
-    depends_on:
-      - mongodb
-
-  mongodb:
-    image: mongo:3-xenial
-    container_name: mongodb-vietlott
-    restart: always
-    environment:
-      - TZ=Asia/Ho_Chi_Minh
-      # admin authentication database
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=123456Aa@
-      - MONGO_INITDB_DATABASE=vietlott
     ports:
-      - 27018:27017
-    volumes:
-      - mongodb-db:/data/db
-      - ./docker/mongo:/docker-entrypoint-initdb.d/
+      - 8181:8181
 
-volumes:
-  mongodb-db:
+networks:
+  default:
+    external:
+      name: docker-network

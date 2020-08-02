@@ -66,6 +66,8 @@ func main() {
 	ticketService := service.NewTicketService(mongoHandler)
 	ticketController := controller.NewTicketController(ticketService)
 
+	manualController := controller.NewManuallController(parser, slackMessenger)
+
 	task := schedule.NewUpdateTask(parser, slackMessenger, ticketService)
 	go func() {
 		_ = gocron.Every(1).Wednesday().At("19:00").Do(task.TaskUpdateResultAndCompare, ctx)
@@ -75,7 +77,7 @@ func main() {
 		<-gocron.Start()
 	}()
 
-	server := web.New(cfg, ticketController)
+	server := web.New(cfg, ticketController, manualController)
 	if err = server.Run(); err != nil {
 		log.Fatal(err)
 	}

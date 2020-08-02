@@ -24,9 +24,7 @@ FROM scratch
 COPY --from=builder /user/group /user/passwd /etc/
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /build/bin/vietlott /vietlott
-COPY --from=builder /build/.env /.env
 
 USER nobody:nobody
-EXPOSE 8182
 
 ENTRYPOINT ["/vietlott"]
