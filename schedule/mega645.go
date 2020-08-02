@@ -45,6 +45,7 @@ func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
 	}
 
 	if len(tickets) > 0 {
+		log.Println("total tickets = ", len(tickets))
 		tryToGetResult := true
 		tryCount := 0
 		for tryToGetResult {
@@ -56,6 +57,7 @@ func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
 				if tryCount > 30 {
 					tryToGetResult = false
 				}
+				log.Println("retry getting jackpot result in next 1 minute...")
 				time.Sleep(1 * time.Minute)
 				tryCount++
 			}
@@ -84,7 +86,7 @@ func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
 		_ = u.slack.Send(domain.MapFromCompareResult(result))
 		_ = u.ticketSvc.UpdateCheckedTicket(ctx)
 	} else {
-		log.Println("There are no ticket, skip...")
+		log.Println("there are no ticket, skip...")
 	}
 }
 
