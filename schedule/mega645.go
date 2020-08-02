@@ -5,9 +5,7 @@ import (
 	"dev.duclm/vietlott/domain"
 	"dev.duclm/vietlott/service"
 	"dev.duclm/vietlott/slack"
-	"fmt"
 	"log"
-	"sort"
 	"strconv"
 	"time"
 )
@@ -71,12 +69,8 @@ func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
 		for index, num := range jackpotRes.Jackpot {
 			jackpotNum[index], _ = strconv.Atoi(num)
 		}
-		sort.Ints(jackpotNum)
-		log.Println(fmt.Sprintf("jackpot numbers: %v", jackpotNum))
 		for _, ticket := range tickets {
-			sort.Ints(ticket.Number)
-			prize := Compare(ticket.Number, jackpotNum)
-			log.Println(fmt.Sprintf("compare ticket %v: %v", ticket.Number, prize))
+			prize := compare(ticket.Number, jackpotNum)
 			switch prize {
 			case JackpotPrize:
 				copy(result.JackpotPrize[:], ticket.Number)
@@ -102,10 +96,10 @@ func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
 	}
 }
 
-func Compare(ticket []int, jackpot []int) LotteryPrize {
+func compare(ticket []int, jackpot []int) LotteryPrize {
 	matched := 0
-	for i, num := range jackpot {
-		if ticket[i] == num {
+	for _, num := range ticket {
+		if isInSlice(num, jackpot) {
 			matched++
 		}
 	}
@@ -120,4 +114,13 @@ func Compare(ticket []int, jackpot []int) LotteryPrize {
 		return ThirdPrize
 	}
 	return NoPrize
+}
+
+func isInSlice(num int, slice []int) bool {
+	for _, element := range slice {
+		if num == element {
+			return true
+		}
+	}
+	return false
 }

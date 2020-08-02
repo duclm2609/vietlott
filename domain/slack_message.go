@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"strings"
 )
 
 const BlockTypeSection = "section"
@@ -100,7 +101,7 @@ func MapFromCompareResult(result Mega645CompareResult) SlackMessage {
 			Type: BlockTypeSection,
 			Text: Text{
 				Type: TextTypeMarkdown,
-				Text: fmt.Sprintf("Giải nhất: %d", len(result.FirstPrize)),
+				Text: fmt.Sprintf("Giải nhất: %d\n%s", len(result.FirstPrize), printTicketList(result.FirstPrize)),
 			},
 		})
 	}
@@ -109,7 +110,7 @@ func MapFromCompareResult(result Mega645CompareResult) SlackMessage {
 			Type: BlockTypeSection,
 			Text: Text{
 				Type: TextTypeMarkdown,
-				Text: fmt.Sprintf("Giải nhì: %d", len(result.SecondPrize)),
+				Text: fmt.Sprintf("Giải nhì: %d\n%s", len(result.SecondPrize), printTicketList(result.SecondPrize)),
 			},
 		})
 	}
@@ -118,7 +119,7 @@ func MapFromCompareResult(result Mega645CompareResult) SlackMessage {
 			Type: BlockTypeSection,
 			Text: Text{
 				Type: TextTypeMarkdown,
-				Text: fmt.Sprintf("Giải ba: %d", len(result.ThirdPrize)),
+				Text: fmt.Sprintf("Giải ba: %d\n%s", len(result.ThirdPrize), printTicketList(result.ThirdPrize)),
 			},
 		})
 	}
@@ -132,4 +133,12 @@ func MapFromCompareResult(result Mega645CompareResult) SlackMessage {
 		})
 	}
 	return SlackMessage{Blocks: blocks}
+}
+
+func printTicketList(tickets []Ticket) string {
+	var b strings.Builder
+	for _, t := range tickets {
+		_, _ = fmt.Fprintf(&b, "%v\n", t)
+	}
+	return b.String()
 }
