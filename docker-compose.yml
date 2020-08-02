@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: vietlott
+    restart: always
     depends_on:
       - mongodb
 

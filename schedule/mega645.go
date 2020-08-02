@@ -7,6 +7,7 @@ import (
 	"dev.duclm/vietlott/slack"
 	"log"
 	"strconv"
+	"time"
 )
 
 type LotteryPrize int
@@ -44,6 +45,20 @@ func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
 	}
 
 	if len(tickets) > 0 {
+		tryToGetResult := true
+		tryCount := 0
+		for tryToGetResult {
+			if jackpotRes.DrawDate.Date() == time.Now().Date() {
+				tryToGetResult = false
+			} else {
+				if tryCount > 30 {
+					tryToGetResult = false
+				}
+				time.Sleep(1 * time.Minute)
+				tryCount++
+			}
+		}
+		_ = u.slack.Send(domain.MapFrom(jackpotRes))
 		for _, ticket := range tickets {
 			prize := Compare(ticket.Number, jackpotRes.Jackpot)
 			switch prize {
