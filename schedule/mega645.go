@@ -48,7 +48,9 @@ func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
 		tryToGetResult := true
 		tryCount := 0
 		for tryToGetResult {
-			if jackpotRes.DrawDate.Date() == time.Now().Date() {
+			_, _, drawDate := jackpotRes.DrawDate.Date()
+			_, _, curDate := time.Now().Date()
+			if drawDate == curDate {
 				tryToGetResult = false
 			} else {
 				if tryCount > 30 {
