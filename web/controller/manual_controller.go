@@ -16,10 +16,11 @@ type ManualController struct {
 	updateTask schedule.UpdateTask
 }
 
-func NewManuallController(parser service.Parser, messenger slack.Messenger) ManualController {
+func NewManuallController(parser service.Parser, messenger slack.Messenger, task schedule.UpdateTask) ManualController {
 	return ManualController{
-		parser:    parser,
-		messenger: messenger,
+		parser:     parser,
+		messenger:  messenger,
+		updateTask: task,
 	}
 }
 
