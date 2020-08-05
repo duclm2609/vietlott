@@ -3,8 +3,12 @@ package service
 import (
 	"crypto/rand"
 	"math/big"
+	math_rand "math/rand"
 	"sort"
+	"time"
 )
+
+const seed int64 = 173009122017
 
 const ballsPerTicket = 6
 const totalBallNumber = 45
@@ -18,12 +22,16 @@ func (g generator) GenerateMega645() []int {
 	res := make([]int, ballsPerTicket)
 	remainBalls := make([]int, totalBallNumber)
 	copy(remainBalls, balls)
+	math_rand.Seed(seed)
 	for i := 0; i < ballsPerTicket; i++ {
 		bound := totalBallNumber - i
 		index, _ := rand.Int(rand.Reader, big.NewInt(int64(bound)))
 		j := index.Uint64()
 		res[i] = remainBalls[j]
 		remainBalls = append(remainBalls[:j], remainBalls[j+1:]...)
+
+		sleep := math_rand.Intn(500)
+		time.Sleep(time.Duration(sleep) * time.Millisecond)
 	}
 	sort.Ints(res)
 	return res
