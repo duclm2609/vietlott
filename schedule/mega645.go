@@ -34,24 +34,26 @@ func NewUpdateTask(parser service.Parser, messenger slack.Messenger, ticket *ser
 	}
 }
 
-func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
+func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context, manual bool) {
 	var result domain.Mega645CompareResult
 
-	jackpotRes, _ := u.parser.ParseMega645Result(ctx)
 	tickets, err := u.ticketSvc.ListUndraw(ctx)
 	if err != nil {
 		log.Printf("error getting tickets: %v", err)
 		return
 	}
 
+	var jackpotRes domain.Mega645Result
+
 	if len(tickets) > 0 {
 		log.Println("total tickets = ", len(tickets))
 		tryToGetResult := true
 		tryCount := 0
 		for tryToGetResult {
+			jackpotRes, _ = u.parser.ParseMega645Result(ctx)
 			_, _, drawDate := jackpotRes.DrawDate.Date()
 			_, _, curDate := time.Now().Date()
-			if drawDate == curDate {
+			if drawDate == curDate || manual {
 				tryToGetResult = false
 			} else {
 				if tryCount > 30 {
