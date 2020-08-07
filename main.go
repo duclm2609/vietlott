@@ -68,9 +68,9 @@ func main() {
 
 	task := schedule.NewUpdateTask(parser, slackMessenger, ticketService)
 	go func() {
-		_ = gocron.Every(1).Wednesday().At("18:35").Do(task.TaskUpdateResultAndCompare, ctx, false)
-		_ = gocron.Every(1).Friday().At("18:35").Do(task.TaskUpdateResultAndCompare, ctx, false)
-		_ = gocron.Every(1).Sunday().At("18:35").Do(task.TaskUpdateResultAndCompare, ctx, false)
+		_ = gocron.Every(1).Wednesday().At("18:35").Do(task.TaskUpdateResultAndCompare, ctx)
+		_ = gocron.Every(1).Friday().At("18:35").Do(task.TaskUpdateResultAndCompare, ctx)
+		_ = gocron.Every(1).Sunday().At("18:35").Do(task.TaskUpdateResultAndCompare, ctx)
 		// Start all the pending jobs
 		<-gocron.Start()
 	}()

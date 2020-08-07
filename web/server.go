@@ -31,7 +31,7 @@ func (s *Server) Run() error {
 			ticketApi.Get("/generate/{ticket:int}", s.ticketController.Mega645Generate)
 		}
 		api.Get("/manual/mega645/result", s.manualController.GetCurrentMega645Result)
-		api.Get("/manual/mega645/check", s.manualController.CheckTicketResult)
+		api.Get("/manual/mega645/check/{last:int64}", s.manualController.CheckTicketResult)
 	}
 	return s.app.Listen(":" + s.cfg.ServerPort)
 }

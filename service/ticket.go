@@ -36,6 +36,10 @@ func (t *Ticket) ListUndraw(ctx context.Context) ([]domain.Mega645Ticket, error)
 	return t.ticketRepo.ListUndraw(ctx)
 }
 
+func (t *Ticket) ListLastOf(ctx context.Context, numberOfTicket int64) ([]domain.Mega645Ticket, error) {
+	return t.ticketRepo.GetLast(ctx, numberOfTicket)
+}
+
 func (t *Ticket) UpdateCheckedTicket(ctx context.Context) error {
 	return t.ticketRepo.Update(ctx)
 }

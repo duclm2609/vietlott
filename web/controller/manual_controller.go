@@ -31,6 +31,7 @@ func (m ManualController) GetCurrentMega645Result(ctx iris.Context) {
 }
 
 func (m ManualController) CheckTicketResult(ctx iris.Context) {
-	m.updateTask.TaskUpdateResultAndCompare(context.TODO(), true)
+	last := ctx.Params().GetInt64Default("last", 0)
+	m.updateTask.ManualCheck(context.TODO(), last)
 	_, _ = ctx.JSON(http.StatusOK)
 }

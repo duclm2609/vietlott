@@ -6,6 +6,7 @@ import (
 	"dev.duclm/vietlott/persistence/mongodb/entity"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 )
 
@@ -64,4 +65,33 @@ func (h handler) Update(ctx context.Context) error {
 
 	log.Printf("Matched %v documents and updated %v documents.\n", updateResult.MatchedCount, updateResult.ModifiedCount)
 	return nil
+}
+
+func (h handler) GetLast(ctx context.Context, last int64) ([]domain.Mega645Ticket, error) {
+	var res []domain.Mega645Ticket
+	opts := &options.FindOptions{
+		Limit:    &last,
+		Skip:     nil,
+		Snapshot: nil,
+		Sort:     bson.D{{"$natural", -1}},
+	}
+	cursor, err := h.db.Collection("mega645_ticket").Find(ctx, bson.M{}, opts)
+	if err != nil {
+		return res, err
+	}
+	for cursor.Next(ctx) {
+		var elem entity.Mega645Ticket
+		err := cursor.Decode(&elem)
+		if err != nil {
+			log.Fatal(err)
+		}
+		res = append(res, domain.Mega645Ticket{
+			Number: elem.Ticket,
+		})
+	}
+
+	if err := cursor.Err(); err != nil {
+		log.Fatal(err)
+	}
+	return res, nil
 }
