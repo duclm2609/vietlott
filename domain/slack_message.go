@@ -135,6 +135,31 @@ func MapFromCompareResult(result Mega645CompareResult) SlackMessage {
 	return SlackMessage{Blocks: blocks}
 }
 
+func MapFromTicketList(tickets [][]int) SlackMessage {
+	var blocks []Block
+	blocks = append(blocks, Block{
+		Type: BlockTypeSection,
+		Text: Text{
+			Type: TextTypeMarkdown,
+			Text: ":heart: dãy số may mắn ngày hôm nay :heart:",
+		},
+	})
+	var b strings.Builder
+	for _, item := range tickets {
+		_, _ = fmt.Fprintf(&b, "%d\n", item)
+
+	}
+	blocks = append(blocks, Block{
+		Type: BlockTypeSection,
+		Text: Text{
+			Type: TextTypeMarkdown,
+			Text: fmt.Sprintf("%s", b.String()),
+		},
+	})
+
+	return SlackMessage{Blocks: blocks}
+}
+
 func printTicketList(tickets []Ticket) string {
 	var b strings.Builder
 	for _, t := range tickets {

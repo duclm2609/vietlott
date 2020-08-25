@@ -44,27 +44,28 @@ func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
 	}
 
 	var jackpotRes domain.Mega645Result
+	tryToGetResult := true
+	tryCount := 0
+	for tryToGetResult {
+		jackpotRes, _ = u.parser.ParseMega645Result(ctx)
+		_, _, drawDate := jackpotRes.DrawDate.Date()
+		_, _, curDate := time.Now().Date()
+		if drawDate == curDate {
+			tryToGetResult = false
+		} else {
+			if tryCount > 30 {
+				tryToGetResult = false
+			}
+			log.Println("retry getting jackpot result in next 1 minute...")
+			time.Sleep(1 * time.Minute)
+			tryCount++
+		}
+	}
+	_ = u.slack.Send(domain.MapFrom(jackpotRes))
 
+	// compare result if we have any ticket
 	if len(tickets) > 0 {
 		log.Println("total tickets = ", len(tickets))
-		tryToGetResult := true
-		tryCount := 0
-		for tryToGetResult {
-			jackpotRes, _ = u.parser.ParseMega645Result(ctx)
-			_, _, drawDate := jackpotRes.DrawDate.Date()
-			_, _, curDate := time.Now().Date()
-			if drawDate == curDate {
-				tryToGetResult = false
-			} else {
-				if tryCount > 30 {
-					tryToGetResult = false
-				}
-				log.Println("retry getting jackpot result in next 1 minute...")
-				time.Sleep(1 * time.Minute)
-				tryCount++
-			}
-		}
-		_ = u.slack.Send(domain.MapFrom(jackpotRes))
 
 		// convert jackpot to int
 		var jackpotNum = make([]int, 6)

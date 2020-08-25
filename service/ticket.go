@@ -18,7 +18,7 @@ func NewTicketService(ticketRepo repository.Ticket) *Ticket {
 
 func (t *Ticket) Mega645Generate(num int) []domain.Mega645Ticket {
 	var randomTickets []domain.Mega645Ticket
-	generator := generator{}
+	generator := Generator{}
 	for i := 0; i < num; i++ {
 		mega645 := generator.GenerateMega645()
 		randomTickets = append(randomTickets, domain.Mega645Ticket{
