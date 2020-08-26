@@ -32,6 +32,7 @@ func (s *Server) Run() error {
 		}
 		api.Get("/manual/mega645/result", s.manualController.GetCurrentMega645Result)
 		api.Get("/manual/mega645/check/{last:int64}", s.manualController.CheckTicketResult)
+		api.Get("/manual/mega645/generate-and-send", s.manualController.GenerateManualAndSend)
 	}
 	return s.app.Listen(":" + s.cfg.ServerPort)
 }

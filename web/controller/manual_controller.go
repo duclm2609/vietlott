@@ -11,16 +11,18 @@ import (
 )
 
 type ManualController struct {
-	parser     service.Parser
-	messenger  slack.Messenger
-	updateTask schedule.UpdateTask
+	parser          service.Parser
+	messenger       slack.Messenger
+	updateTask      schedule.UpdateTask
+	ticketGenerator *schedule.TicketGenerator
 }
 
-func NewManuallController(parser service.Parser, messenger slack.Messenger, task schedule.UpdateTask) ManualController {
+func NewManuallController(parser service.Parser, messenger slack.Messenger, task schedule.UpdateTask, generator *schedule.TicketGenerator) ManualController {
 	return ManualController{
-		parser:     parser,
-		messenger:  messenger,
-		updateTask: task,
+		parser:          parser,
+		messenger:       messenger,
+		updateTask:      task,
+		ticketGenerator: generator,
 	}
 }
 
@@ -33,5 +35,10 @@ func (m ManualController) GetCurrentMega645Result(ctx iris.Context) {
 func (m ManualController) CheckTicketResult(ctx iris.Context) {
 	last := ctx.Params().GetInt64Default("last", 0)
 	m.updateTask.ManualCheck(context.TODO(), last)
+	_, _ = ctx.JSON(http.StatusOK)
+}
+
+func (m ManualController) GenerateManualAndSend(ctx iris.Context) {
+	m.ticketGenerator.GenerateAndSend()
 	_, _ = ctx.JSON(http.StatusOK)
 }

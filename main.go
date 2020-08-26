@@ -81,7 +81,7 @@ func main() {
 		<-gocron.Start()
 	}()
 
-	manualController := controller.NewManuallController(parser, slackMessenger, task)
+	manualController := controller.NewManuallController(parser, slackMessenger, task, ticketGenerator)
 	server := web.New(cfg, ticketController, manualController)
 	if err = server.Run(); err != nil {
 		log.Fatal(err)

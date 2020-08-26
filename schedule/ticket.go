@@ -5,6 +5,8 @@ import (
 	"dev.duclm/vietlott/domain"
 	"dev.duclm/vietlott/service"
 	"dev.duclm/vietlott/slack"
+	"log"
+	"time"
 )
 
 type TicketGenerator struct {
@@ -22,6 +24,7 @@ func NewTicketGenerator(messenger slack.Messenger, ticket *service.Ticket) *Tick
 }
 
 func (t *TicketGenerator) GenerateAndSend() {
+	log.Printf("start generate ticket at: %v", time.Now().Date())
 	// randomly generate 2 tickets each period
 	var tickets [][]int
 	var domainTickets []domain.Mega645Ticket
@@ -37,5 +40,8 @@ func (t *TicketGenerator) GenerateAndSend() {
 	// save tickets
 	_ = t.ticketService.Save(context.TODO(), domainTickets)
 
-	_ = t.slack.Send(domain.MapFromTicketList(tickets))
+	err := t.slack.Send(domain.MapFromTicketList(tickets))
+	if err != nil {
+		log.Println("error send slack: ", err)
+	}
 }
