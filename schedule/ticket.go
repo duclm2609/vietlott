@@ -24,7 +24,7 @@ func NewTicketGenerator(messenger slack.Messenger, ticket *service.Ticket) *Tick
 }
 
 func (t *TicketGenerator) GenerateAndSend() {
-	log.Printf("start generate ticket at: %v", time.Now().Date())
+	log.Printf("start generate ticket at: %v", time.Now().Format("2006-01-02 15:04:05"))
 	// randomly generate 2 tickets each period
 	var tickets [][]int
 	var domainTickets []domain.Mega645Ticket

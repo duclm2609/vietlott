@@ -35,7 +35,7 @@ func NewUpdateTask(parser service.Parser, messenger slack.Messenger, ticket *ser
 }
 
 func (u UpdateTask) TaskUpdateResultAndCompare(ctx context.Context) {
-	log.Printf("start updating draw result at: %v", time.Now().Date())
+	log.Printf("start updating draw result at: %v", time.Now().Format("2006-01-02 15:04:05"))
 	var result domain.Mega645CompareResult
 
 	tickets, err := u.ticketSvc.ListUndraw(ctx)
